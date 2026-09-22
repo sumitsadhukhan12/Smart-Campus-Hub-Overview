@@ -1,0 +1,6 @@
+{
+  "name": "Smart Campus Hub",
+  "description": "One Campus. One Platform. Everything Connected. Centralized digital campus hub for students, faculty, and administrators.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
