@@ -23,14 +23,37 @@ function MainLayout() {
 
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1024;
+    }
+    return true;
+  });
   const [showSearchModal, setShowSearchModal] = useState<boolean>(false);
-  const [showAssistantModal, setShowAssistantModal] = useState<boolean>(false);
+
+  // Close mobile drawer on Escape key press
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && sidebarOpen && window.innerWidth < 1024) {
+        setSidebarOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [sidebarOpen]);
 
   const handleNavigate = (tab: string, itemId?: string) => {
     setCurrentTab(tab);
     setSelectedItemId(itemId || null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSidebarNavigate = (tab: string) => {
+    handleNavigate(tab);
+    // On mobile/tablet, close drawer automatically on tab selection
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
   };
 
   const renderContent = () => {
@@ -63,19 +86,17 @@ function MainLayout() {
         onOpenSearch={() => setShowSearchModal(true)}
         onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
         onNavigate={handleNavigate}
+        isSidebarOpen={sidebarOpen}
       />
 
       {/* Main Content Area with Sidebar */}
       <div className="flex-1 flex max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 gap-6">
-        {/* Left Desktop Sidebar */}
+        {/* Navigation Sidebar */}
         <Sidebar
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
           currentTab={currentTab}
-          onNavigate={(tab) => {
-            handleNavigate(tab);
-            setSidebarOpen(false);
-          }}
+          onNavigate={handleSidebarNavigate}
         />
 
         {/* Dynamic Page Workspace */}

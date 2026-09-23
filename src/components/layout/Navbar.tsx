@@ -22,9 +22,10 @@ interface NavbarProps {
   onOpenSearch: () => void;
   onToggleSidebar: () => void;
   onNavigate: (tab: string, itemId?: string) => void;
+  isSidebarOpen?: boolean;
 }
 
-export default function Navbar({ onOpenSearch, onToggleSidebar, onNavigate }: NavbarProps) {
+export default function Navbar({ onOpenSearch, onToggleSidebar, onNavigate, isSidebarOpen }: NavbarProps) {
   const { user, logout, switchDemoRole, setShowAuthModal, setAuthModalTab } = useAuth();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
@@ -64,13 +65,18 @@ export default function Navbar({ onOpenSearch, onToggleSidebar, onNavigate }: Na
       id="main-navbar"
       className="sticky top-0 z-30 h-16 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between"
     >
-      {/* Left: Mobile menu toggle + Logo */}
+      {/* Left: Menu toggle + Logo */}
       <div className="flex items-center gap-3">
         <button
-          id="mobile-sidebar-toggle-btn"
+          id="sidebar-toggle-btn"
           onClick={onToggleSidebar}
-          className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors"
-          title="Toggle Navigation Menu"
+          className={`p-2 rounded-xl transition-all ${
+            isSidebarOpen
+              ? 'bg-blue-50 text-blue-700 hover:bg-blue-100'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+          }`}
+          title={isSidebarOpen ? 'Collapse Navigation Sidebar' : 'Expand Navigation Sidebar'}
+          aria-label="Toggle navigation menu"
         >
           <Menu className="w-5 h-5" />
         </button>

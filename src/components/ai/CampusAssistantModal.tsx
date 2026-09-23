@@ -39,6 +39,12 @@ export default function CampusAssistantModal() {
     }
   }, [messages, isOpen]);
 
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener('open-campus-assistant', handleOpen);
+    return () => window.removeEventListener('open-campus-assistant', handleOpen);
+  }, []);
+
   const handleSend = async (textToSend?: string) => {
     const query = (textToSend || input).trim();
     if (!query || loading) return;
